@@ -110,14 +110,13 @@ collabcode/
 │   │   ├── App.jsx          # Main app — room join + editor
 │   │   ├── App.css          # Global styles
 │   │   └── main.jsx         # React entry point
-│   ├── Dockerfile           # Frontend Docker image
 │   └── package.json
 │
 ├── 🖥 backend/
 │   ├── server.js            # Express + WebSocket (y-websocket)
-│   ├── Dockerfile           # Backend Docker image
 │   └── package.json
 │
+│   ├── Dockerfile          
 ├── 🐳 docker-compose.yml    # Orchestrate frontend + backend
 └── 📖 README.md
 ```
