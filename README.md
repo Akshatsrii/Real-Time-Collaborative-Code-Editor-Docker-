@@ -546,7 +546,7 @@ PORT=10000
 
 <div align="center">
 
-**Built with ❤️ to learn Docker, Vercel & Render in a real-world project**
+**Built to learn Docker, Vercel & Render in a real-world project**
 
 🌐 [Live Demo (Vercel)](https://real-time-collaborative-code-editor-gilt.vercel.app/) &nbsp;·&nbsp; ⚙️ [Backend (Render)](https://real-time-collaborative-code-editor-wb5a.onrender.com)
 
