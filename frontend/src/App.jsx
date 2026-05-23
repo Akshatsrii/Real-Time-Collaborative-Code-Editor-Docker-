@@ -31,6 +31,7 @@ function getAvatarColor(name) {
 
 function Initials({ name }) {
   const [bg, fg] = getAvatarColor(name)
+
   return (
     <span className="avatar" style={{ background: bg, color: fg }}>
       {name.slice(0, 2).toUpperCase()}
@@ -44,6 +45,7 @@ export default function App() {
   const [users, setUsers] = useState([])
   const [language, setLanguage] = useState("javascript")
   const [joining, setJoining] = useState(false)
+
   const editorRef = useRef(null)
 
   const ydoc = useMemo(() => new Y.Doc(), [])
@@ -55,23 +57,42 @@ export default function App() {
 
   const handleJoin = (e) => {
     e.preventDefault()
+
     const name = draft.trim()
+
     if (!name) return
+
     setJoining(true)
-    setTimeout(() => setUsername(name), 500)
+
+    setTimeout(() => {
+      setUsername(name)
+    }, 500)
   }
 
   useEffect(() => {
     if (!username || !editorRef.current) return
 
-    const provider = new WebsocketProvider("ws://localhost:1234", "monaco-room", ydoc)
+    const provider = new WebsocketProvider(
+      "wss://real-time-collaborative-code-editor-pyms.onrender.com",
+      "monaco-room",
+      ydoc
+    )
+
     const [color] = getAvatarColor(username)
 
-    provider.awareness.setLocalStateField("user", { username, color })
+    provider.awareness.setLocalStateField("user", {
+      username,
+      color,
+    })
 
     provider.awareness.on("change", () => {
       const states = Array.from(provider.awareness.getStates().values())
-      setUsers(states.map((s) => s.user).filter(Boolean))
+
+      setUsers(
+        states
+          .map((s) => s.user)
+          .filter(Boolean)
+      )
     })
 
     const binding = new MonacoBinding(
@@ -89,15 +110,15 @@ export default function App() {
 
   const langMeta = LANGUAGES.find((l) => l.value === language)
 
-  /* ── Join Screen ───────────────────────────────────── */
   if (!username) {
     return (
       <div className="join-root">
         <div className="join-noise" />
+
         <div className={`join-card ${joining ? "joining" : ""}`}>
           <div className="join-eyebrow">
             <span className="join-dot" />
-            localhost:1234
+            real-time-collaborative-code-editor-pyms.onrender.com
           </div>
 
           <h1 className="join-heading">
@@ -105,11 +126,15 @@ export default function App() {
             CodeSync
             <span className="join-bracket">]</span>
           </h1>
-          <p className="join-sub">real-time collaborative editor</p>
+
+          <p className="join-sub">
+            real-time collaborative editor
+          </p>
 
           <form className="join-form" onSubmit={handleJoin}>
             <div className="join-field">
               <span className="join-prefix">$</span>
+
               <input
                 className="join-input"
                 type="text"
@@ -119,14 +144,21 @@ export default function App() {
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
               />
+
               <span className="join-cursor" />
             </div>
 
-            <button className="join-btn" type="submit" disabled={joining}>
+            <button
+              className="join-btn"
+              type="submit"
+              disabled={joining}
+            >
               {joining ? (
                 <span className="join-spinner" />
               ) : (
-                <>connect <span className="join-arrow">—›</span></>
+                <>
+                  connect <span className="join-arrow">—›</span>
+                </>
               )}
             </button>
           </form>
@@ -139,17 +171,21 @@ export default function App() {
     )
   }
 
-  /* ── Editor Screen ─────────────────────────────────── */
   return (
     <div className="app-root">
 
-      {/* Top bar */}
       <header className="topbar">
         <div className="topbar-left">
           <span className="topbar-logo">[CS]</span>
+
           <span className="topbar-sep">/</span>
-          <span className="topbar-room">monaco-room</span>
+
+          <span className="topbar-room">
+            monaco-room
+          </span>
+
           <span className="topbar-sep">/</span>
+
           <span className="topbar-file">
             untitled.{langMeta?.ext ?? "txt"}
           </span>
@@ -177,21 +213,28 @@ export default function App() {
 
       <div className="app-body">
 
-        {/* Sidebar */}
         <aside className="sidebar">
           <div className="sidebar-block">
-            <p className="sidebar-label">collaborators</p>
+            <p className="sidebar-label">
+              collaborators
+            </p>
+
             <ul className="user-list">
               {users.map((u, i) => (
                 <li key={i} className="user-row">
                   <Initials name={u.username} />
+
                   <div className="user-meta">
                     <span className="user-name">
                       {u.username}
+
                       {u.username === username && (
-                        <span className="you-badge">you</span>
+                        <span className="you-badge">
+                          you
+                        </span>
                       )}
                     </span>
+
                     <span className="user-status">
                       <span className="online-dot sm" />
                       editing
@@ -199,32 +242,46 @@ export default function App() {
                   </div>
                 </li>
               ))}
+
               {users.length === 0 && (
-                <li className="user-empty">connecting…</li>
+                <li className="user-empty">
+                  connecting…
+                </li>
               )}
             </ul>
           </div>
 
           <div className="sidebar-block sidebar-footer">
             <p className="sidebar-label">session</p>
+
             <div className="session-rows">
               <div className="session-row">
                 <span>room</span>
-                <span className="session-val">monaco-room</span>
+
+                <span className="session-val">
+                  monaco-room
+                </span>
               </div>
+
               <div className="session-row">
                 <span>lang</span>
-                <span className="session-val">{langMeta?.label}</span>
+
+                <span className="session-val">
+                  {langMeta?.label}
+                </span>
               </div>
+
               <div className="session-row">
                 <span>user</span>
-                <span className="session-val">{username}</span>
+
+                <span className="session-val">
+                  {username}
+                </span>
               </div>
             </div>
           </div>
         </aside>
 
-        {/* Monaco */}
         <section className="editor-wrap">
           <Editor
             height="100%"
@@ -234,16 +291,22 @@ export default function App() {
             onMount={handleMount}
             options={{
               fontSize: 14,
-              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              fontFamily:
+                "'JetBrains Mono', 'Fira Code', monospace",
               fontLigatures: true,
               minimap: { enabled: false },
               scrollBeyondLastLine: false,
-              padding: { top: 24, bottom: 24 },
+              padding: {
+                top: 24,
+                bottom: 24,
+              },
               lineNumbers: "on",
               cursorBlinking: "smooth",
               smoothScrolling: true,
               renderLineHighlight: "gutter",
-              bracketPairColorization: { enabled: true },
+              bracketPairColorization: {
+                enabled: true,
+              },
             }}
           />
         </section>
