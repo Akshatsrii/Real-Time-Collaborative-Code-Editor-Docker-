@@ -1,14 +1,10 @@
-import express from "express"
-import { createServer } from "http"
-import { Server } from "socket.io"
-import { YSocketIO } from "y-socket.io/dist/server"
-import path from "path"
-import { fileURLToPath } from "url"
+const express = require("express")
+const { createServer } = require("http")
+const { Server } = require("socket.io")
+const { YSocketIO } = require("y-socket.io/dist/server")
+const path = require("path")
 
 const app = express()
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const frontendPath = path.join(__dirname, "../frontend/dist")
 
