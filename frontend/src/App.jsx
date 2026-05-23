@@ -5,18 +5,49 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import * as Y from "yjs"
 import { WebsocketProvider } from "y-websocket"
 
-function App() {
+const AVATAR_COLORS = [
+  ["#c8f73a", "#0f1a00"],
+  ["#7ee8ff", "#001a21"],
+  ["#ff7eb6", "#200011"],
+  ["#ffca6e", "#201000"],
+  ["#b69eff", "#0d0020"],
+  ["#6effd4", "#002018"],
+]
 
+const LANGUAGES = [
+  { label: "JavaScript", value: "javascript", ext: "js" },
+  { label: "TypeScript", value: "typescript", ext: "ts" },
+  { label: "Python", value: "python", ext: "py" },
+  { label: "Rust", value: "rust", ext: "rs" },
+  { label: "CSS", value: "css", ext: "css" },
+  { label: "JSON", value: "json", ext: "json" },
+]
+
+function getAvatarColor(name) {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h += name.charCodeAt(i)
+  return AVATAR_COLORS[h % AVATAR_COLORS.length]
+}
+
+function Initials({ name }) {
+  const [bg, fg] = getAvatarColor(name)
+  return (
+    <span className="avatar" style={{ background: bg, color: fg }}>
+      {name.slice(0, 2).toUpperCase()}
+    </span>
+  )
+}
+
+export default function App() {
   const [username, setUsername] = useState("")
+  const [draft, setDraft] = useState("")
   const [users, setUsers] = useState([])
-
+  const [language, setLanguage] = useState("javascript")
+  const [joining, setJoining] = useState(false)
   const editorRef = useRef(null)
 
   const ydoc = useMemo(() => new Y.Doc(), [])
-
-  const yText = useMemo(() => {
-    return ydoc.getText("monaco")
-  }, [ydoc])
+  const yText = useMemo(() => ydoc.getText("monaco"), [ydoc])
 
   const handleMount = (editor) => {
     editorRef.current = editor
@@ -24,37 +55,23 @@ function App() {
 
   const handleJoin = (e) => {
     e.preventDefault()
-
-    const name = e.target.username.value
-
-    setUsername(name)
+    const name = draft.trim()
+    if (!name) return
+    setJoining(true)
+    setTimeout(() => setUsername(name), 500)
   }
 
   useEffect(() => {
-
     if (!username || !editorRef.current) return
 
-    const provider = new WebsocketProvider(
-      "ws://localhost:1234",
-      "monaco-room",
-      ydoc
-    )
+    const provider = new WebsocketProvider("ws://localhost:1234", "monaco-room", ydoc)
+    const [color] = getAvatarColor(username)
 
-    provider.awareness.setLocalStateField("user", {
-      username
-    })
+    provider.awareness.setLocalStateField("user", { username, color })
 
     provider.awareness.on("change", () => {
-
-      const states = Array.from(
-        provider.awareness.getStates().values()
-      )
-
-      const allUsers = states
-        .map((state) => state.user)
-        .filter(Boolean)
-
-      setUsers(allUsers)
+      const states = Array.from(provider.awareness.getStates().values())
+      setUsers(states.map((s) => s.user).filter(Boolean))
     })
 
     const binding = new MonacoBinding(
@@ -68,82 +85,170 @@ function App() {
       binding.destroy()
       provider.disconnect()
     }
-
   }, [username])
 
+  const langMeta = LANGUAGES.find((l) => l.value === language)
+
+  /* ── Join Screen ───────────────────────────────────── */
   if (!username) {
-
     return (
-      <main className="h-screen w-full bg-gray-950 flex items-center justify-center">
+      <div className="join-root">
+        <div className="join-noise" />
+        <div className={`join-card ${joining ? "joining" : ""}`}>
+          <div className="join-eyebrow">
+            <span className="join-dot" />
+            localhost:1234
+          </div>
 
-        <form
-          onSubmit={handleJoin}
-          className="bg-neutral-900 p-6 rounded-lg flex flex-col gap-4 w-[350px]"
-        >
-
-          <h1 className="text-white text-3xl font-bold text-center">
-            Join Room
+          <h1 className="join-heading">
+            <span className="join-bracket">[</span>
+            CodeSync
+            <span className="join-bracket">]</span>
           </h1>
+          <p className="join-sub">real-time collaborative editor</p>
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Enter Username"
-            className="p-3 rounded-lg bg-neutral-800 text-white outline-none"
-          />
+          <form className="join-form" onSubmit={handleJoin}>
+            <div className="join-field">
+              <span className="join-prefix">$</span>
+              <input
+                className="join-input"
+                type="text"
+                placeholder="enter username"
+                autoComplete="off"
+                autoFocus
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+              />
+              <span className="join-cursor" />
+            </div>
 
-          <button
-            className="p-3 rounded-lg bg-amber-50 text-black font-bold"
-          >
-            Join
-          </button>
+            <button className="join-btn" type="submit" disabled={joining}>
+              {joining ? (
+                <span className="join-spinner" />
+              ) : (
+                <>connect <span className="join-arrow">—›</span></>
+              )}
+            </button>
+          </form>
 
-        </form>
-
-      </main>
+          <div className="join-hint">
+            <kbd>enter</kbd> to join · room: monaco-room
+          </div>
+        </div>
+      </div>
     )
   }
 
+  /* ── Editor Screen ─────────────────────────────────── */
   return (
-    <main className="h-screen w-full bg-gray-950 flex gap-4 p-4">
+    <div className="app-root">
 
-      <aside className="w-[220px] h-full bg-white rounded-lg p-4">
-
-        <h1 className="text-3xl font-bold">
-          Users
-        </h1>
-
-        <div className="mt-5 flex flex-col gap-3">
-
-          {
-            users.map((user, index) => (
-              <div
-                key={index}
-                className="bg-slate-900 text-white p-3 rounded-lg"
-              >
-                {user.username}
-              </div>
-            ))
-          }
-
+      {/* Top bar */}
+      <header className="topbar">
+        <div className="topbar-left">
+          <span className="topbar-logo">[CS]</span>
+          <span className="topbar-sep">/</span>
+          <span className="topbar-room">monaco-room</span>
+          <span className="topbar-sep">/</span>
+          <span className="topbar-file">
+            untitled.{langMeta?.ext ?? "txt"}
+          </span>
         </div>
 
-      </aside>
+        <div className="topbar-right">
+          <div className="online-pill">
+            <span className="online-dot" />
+            {users.length} online
+          </div>
 
-      <section className="flex-1 rounded-lg overflow-hidden">
+          <select
+            className="lang-picker"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.value} value={l.value}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </header>
 
-        <Editor
-          height="100%"
-          theme="vs-dark"
-          defaultLanguage="javascript"
-          defaultValue="// Start Coding..."
-          onMount={handleMount}
-        />
+      <div className="app-body">
 
-      </section>
+        {/* Sidebar */}
+        <aside className="sidebar">
+          <div className="sidebar-block">
+            <p className="sidebar-label">collaborators</p>
+            <ul className="user-list">
+              {users.map((u, i) => (
+                <li key={i} className="user-row">
+                  <Initials name={u.username} />
+                  <div className="user-meta">
+                    <span className="user-name">
+                      {u.username}
+                      {u.username === username && (
+                        <span className="you-badge">you</span>
+                      )}
+                    </span>
+                    <span className="user-status">
+                      <span className="online-dot sm" />
+                      editing
+                    </span>
+                  </div>
+                </li>
+              ))}
+              {users.length === 0 && (
+                <li className="user-empty">connecting…</li>
+              )}
+            </ul>
+          </div>
 
-    </main>
+          <div className="sidebar-block sidebar-footer">
+            <p className="sidebar-label">session</p>
+            <div className="session-rows">
+              <div className="session-row">
+                <span>room</span>
+                <span className="session-val">monaco-room</span>
+              </div>
+              <div className="session-row">
+                <span>lang</span>
+                <span className="session-val">{langMeta?.label}</span>
+              </div>
+              <div className="session-row">
+                <span>user</span>
+                <span className="session-val">{username}</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Monaco */}
+        <section className="editor-wrap">
+          <Editor
+            height="100%"
+            theme="vs-dark"
+            language={language}
+            defaultValue={`// ${username} connected · start coding\n`}
+            onMount={handleMount}
+            options={{
+              fontSize: 14,
+              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              fontLigatures: true,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              padding: { top: 24, bottom: 24 },
+              lineNumbers: "on",
+              cursorBlinking: "smooth",
+              smoothScrolling: true,
+              renderLineHighlight: "gutter",
+              bracketPairColorization: { enabled: true },
+            }}
+          />
+        </section>
+
+      </div>
+    </div>
   )
 }
-
-export default App
