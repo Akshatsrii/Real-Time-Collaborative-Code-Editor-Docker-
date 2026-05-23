@@ -1,22 +1,29 @@
+# Dependencies
 node_modules
 npm-debug.log
 
 frontend/node_modules
 backend/node_modules
 
+# Build output
 frontend/dist
 backend/dist
 
+# Version control
 .git
 .gitignore
 
+# Docker
 Dockerfile
 .dockerignore
 
+# Environment
 .env
 .env.local
 .env.production
 
+# Editor
 .vscode
 
-README.mdpm 
+# Docs
+README.md
