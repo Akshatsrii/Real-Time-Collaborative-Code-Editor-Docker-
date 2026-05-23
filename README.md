@@ -15,9 +15,17 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Amazon_ECR-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=black"/>
+</p>
+
+<p align="center">
+  <a href="https://real-time-collaborative-code-editor-gilt.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Vercel%20Frontend-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
+  </a>
+  <a href="https://real-time-collaborative-code-editor-wb5a.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/⚙️%20Backend%20API-Render%20Service-46E3B7?style=for-the-badge&logo=render&logoColor=black"/>
+  </a>
 </p>
 
 <p align="center">
@@ -30,7 +38,10 @@
 <br/>
 
 > ⚡ *Code together. Ship faster. No setup friction.*
-> A production-ready real-time collaborative editor — built to learn **Docker** and **AWS** end-to-end.
+> Frontend on **Vercel** · Backend on **Render** · Dockerized for local dev.
+>
+> 🌐 **[Live Demo → real-time-collaborative-code-editor-gilt.vercel.app](https://real-time-collaborative-code-editor-gilt.vercel.app/)**
+> ⚙️ **[Backend API → real-time-collaborative-code-editor-wb5a.onrender.com](https://real-time-collaborative-code-editor-wb5a.onrender.com)**
 
 </div>
 
@@ -43,10 +54,11 @@
 - [📁 Project Structure](#-project-structure)
 - [🖥 Local Development](#-local-development)
 - [🐳 Docker Setup](#-docker-setup)
-- [☁️ AWS Deployment](#️-aws-deployment)
+- [▲ Frontend — Vercel Deployment](#-frontend--vercel-deployment)
+- [🚀 Backend — Render Deployment](#-backend--render-deployment)
 - [🔐 Environment Variables](#-environment-variables)
 - [🔁 Architecture & Flowchart](#-architecture--flowchart)
-- [🗺 AWS Infrastructure Diagram](#-aws-infrastructure-diagram)
+- [🗺 Infrastructure Diagram](#-infrastructure-diagram)
 
 ---
 
@@ -62,7 +74,8 @@
 | 🚪 **Room System** | Isolated sessions — each room has its own shared document |
 | 🎨 **Dark Themed UI** | Sleek dark editor with responsive layout |
 | 🐳 **Dockerized** | Frontend + backend each containerized, compose-ready |
-| ☁️ **AWS-Ready** | Deploy with EC2 + ECR for a real cloud production setup |
+| ▲ **Vercel Frontend** | React app deployed on Vercel — instant CDN, zero config |
+| 🚀 **Render Backend** | Node.js WebSocket server deployed on Render free tier |
 
 ---
 
@@ -253,195 +266,155 @@ docker-compose up --build backend
 
 ---
 
-## ☁️ AWS Deployment
+## ▲ Frontend — Vercel Deployment
 
 <div align="center">
 
 ```
-   █████╗ ██╗    ██╗███████╗
-  ██╔══██╗██║    ██║██╔════╝
-  ███████║██║ █╗ ██║███████╗
-  ██╔══██║██║███╗██║╚════██║
-  ██║  ██║╚███╔███╔╝███████║
-  ╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝
-  Amazon Web Services — Production Deployment
+ ██╗   ██╗███████╗██████╗  ██████╗███████╗██╗
+ ██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║
+ ██║   ██║█████╗  ██████╔╝██║     █████╗  ██║
+ ╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║
+  ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗███████╗
+   ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
+  Frontend CDN. Global edge. Zero config deploys.
 ```
 
 </div>
 
-This project is designed as a **learning exercise** for Docker + AWS. You will:
+> 🌐 **Live Frontend:** [https://real-time-collaborative-code-editor-gilt.vercel.app/](https://real-time-collaborative-code-editor-gilt.vercel.app/)
 
-- Push Docker images to **Amazon ECR** (Elastic Container Registry)
-- Run containers on an **Amazon EC2** instance
-- Expose the app via EC2's public IP
+Vercel is the perfect home for the React + Vite frontend — instant global CDN, automatic HTTPS, and deploys on every push.
 
 ---
 
-### 🧱 AWS Services Used
+### 📋 Step-by-Step Vercel Deployment
 
-| Service | Role |
+#### Step 1 — Push your code to GitHub
+
+```bash
+git init
+git add .
+git commit -m "initial commit"
+git remote add origin https://github.com/yourusername/collabcode.git
+git push -u origin main
+```
+
+---
+
+#### Step 2 — Import project on Vercel
+
+```
+vercel.com/new → Import Git Repository
+
+  Framework Preset : Vite
+  Root Directory   : frontend        ← important!
+  Build Command    : npm run build
+  Output Directory : dist
+
+  Environment Variables:
+  ┌──────────────┬────────────────────────────────────────────────┐
+  │ Key          │ Value                                          │
+  ├──────────────┼────────────────────────────────────────────────┤
+  │ VITE_WS_URL  │ wss://real-time-collaborative-code-editor-     │
+  │              │       wb5a.onrender.com                        │
+  └──────────────┴────────────────────────────────────────────────┘
+```
+
+> ⚠️ Always use `wss://` (not `ws://`) since Vercel serves over HTTPS
+
+---
+
+#### Step 3 — Deploy ✅
+
+Vercel builds and deploys automatically. Your frontend is live at:
+
+```
+https://real-time-collaborative-code-editor-gilt.vercel.app/
+```
+
+---
+
+### 🔄 Auto Re-deploy on Push
+
+Every `git push` to `main` triggers a new Vercel build — no extra steps needed.
+
+```bash
+git add .
+git commit -m "feat: new editor theme"
+git push origin main
+# ✅ Vercel deploys in ~30 seconds
+```
+
+---
+
+## 🚀 Backend — Render Deployment
+
+<div align="center">
+
+```
+  ██████╗ ███████╗███╗   ██╗██████╗ ███████╗██████╗
+  ██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔════╝██╔══██╗
+  ██████╔╝█████╗  ██╔██╗ ██║██║  ██║█████╗  ██████╔╝
+  ██╔══██╗██╔══╝  ██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗
+  ██║  ██║███████╗██║ ╚████║██████╔╝███████╗██║  ██║
+  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+  Node.js WebSocket backend. Always-on. Free tier.
+```
+
+</div>
+
+> ⚙️ **Live Backend:** [https://real-time-collaborative-code-editor-wb5a.onrender.com](https://real-time-collaborative-code-editor-wb5a.onrender.com)
+
+Render hosts the Node.js WebSocket server — persistent connections, free tier Web Service, auto-deploys from GitHub.
+
+---
+
+### 📋 Step-by-Step Render Deployment
+
+#### Step 1 — Deploy the Backend (Web Service)
+
+```
+render.com → New → Web Service
+
+  Connect:       Your GitHub repo
+  Name:          collabcode-backend
+  Root Dir:      backend
+  Runtime:       Node
+  Build Command: npm install
+  Start Command: node server.js
+  Instance Type: Free
+
+  Environment Variables:
+  ┌──────────┬───────────────┐
+  │ Key      │ Value         │
+  ├──────────┼───────────────┤
+  │ PORT     │ 10000         │
+  └──────────┴───────────────┘
+```
+
+> ✅ Render gives you a URL like:
+> `https://collabcode-backend.onrender.com`
+> Paste this as `VITE_WS_URL` (`wss://...`) in your Vercel env vars.
+
+---
+
+#### Step 2 — Verify it's running
+
+```bash
+# Health check — should return 200 OK
+curl https://real-time-collaborative-code-editor-wb5a.onrender.com/health
+```
+
+---
+
+### ⚠️ Free Tier Notes
+
+| Behaviour | Details |
 |---|---|
-| **EC2** | Virtual machine to run your containers |
-| **ECR** | Private Docker image registry |
-| **Security Groups** | Firewall rules (open ports 80, 1234) |
-| **IAM** | Permissions for ECR access |
-
----
-
-### 📋 Step-by-Step AWS Deployment
-
-#### Step 1 — Install AWS CLI & configure
-
-```bash
-# Install AWS CLI (Linux/macOS)
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip && sudo ./aws/install
-
-# Configure with your IAM credentials
-aws configure
-# AWS Access Key ID:     <your-access-key>
-# AWS Secret Access Key: <your-secret-key>
-# Default region:        ap-south-1        ← Mumbai (closest for India)
-# Output format:         json
-```
-
----
-
-#### Step 2 — Create ECR Repositories
-
-```bash
-# Create repo for backend
-aws ecr create-repository --repository-name collabcode-backend --region ap-south-1
-
-# Create repo for frontend
-aws ecr create-repository --repository-name collabcode-frontend --region ap-south-1
-```
-
----
-
-#### Step 3 — Build, Tag & Push Images to ECR
-
-```bash
-# Authenticate Docker to ECR
-aws ecr get-login-password --region ap-south-1 | \
-  docker login --username AWS --password-stdin \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com
-
-# ---- Backend ----
-docker build -t collabcode-backend ./backend
-
-docker tag collabcode-backend:latest \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-backend:latest
-
-docker push \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-backend:latest
-
-# ---- Frontend ----
-docker build -t collabcode-frontend ./frontend
-
-docker tag collabcode-frontend:latest \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-frontend:latest
-
-docker push \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-frontend:latest
-```
-
----
-
-#### Step 4 — Launch an EC2 Instance
-
-```
-AWS Console → EC2 → Launch Instance
-
-  Name          : collabcode-server
-  AMI           : Ubuntu Server 22.04 LTS (Free tier eligible)
-  Instance type : t2.micro (Free tier)
-  Key pair      : Create new → download .pem file (keep it safe!)
-  
-  Security Group (Inbound Rules):
-  ┌──────────┬──────────┬─────────────┐
-  │ Type     │ Port     │ Source      │
-  ├──────────┼──────────┼─────────────┤
-  │ SSH      │ 22       │ My IP       │
-  │ HTTP     │ 80       │ 0.0.0.0/0   │
-  │ Custom   │ 1234     │ 0.0.0.0/0   │
-  └──────────┴──────────┴─────────────┘
-```
-
----
-
-#### Step 5 — SSH into EC2 & Install Docker
-
-```bash
-# SSH into your instance
-chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@<your-ec2-public-ip>
-
-# Install Docker on EC2
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y docker.io docker-compose awscli
-
-# Add ubuntu user to docker group (no sudo needed)
-sudo usermod -aG docker ubuntu
-newgrp docker
-```
-
----
-
-#### Step 6 — Pull & Run Images on EC2
-
-```bash
-# Authenticate to ECR from inside EC2
-aws ecr get-login-password --region ap-south-1 | \
-  docker login --username AWS --password-stdin \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com
-
-# Pull images
-docker pull <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-backend:latest
-docker pull <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-frontend:latest
-
-# Run backend
-docker run -d \
-  --name collabcode-backend \
-  -p 1234:1234 \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-backend:latest
-
-# Run frontend
-docker run -d \
-  --name collabcode-frontend \
-  -p 80:80 \
-  <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/collabcode-frontend:latest
-
-# Verify containers are running
-docker ps
-```
-
----
-
-#### Step 7 — Access Your Live App 🎉
-
-```
-http://<your-ec2-public-ip>
-```
-
-Share the URL with a friend, open it in two tabs, enter the same room — and you're collaborating live from the cloud!
-
----
-
-### 🔄 Re-deploy After Code Changes
-
-```bash
-# Local machine: rebuild and push new image
-docker build -t collabcode-backend ./backend
-docker tag collabcode-backend:latest <ecr-uri>/collabcode-backend:latest
-docker push <ecr-uri>/collabcode-backend:latest
-
-# On EC2: pull and restart
-ssh -i your-key.pem ubuntu@<ec2-ip>
-docker pull <ecr-uri>/collabcode-backend:latest
-docker stop collabcode-backend && docker rm collabcode-backend
-docker run -d --name collabcode-backend -p 1234:1234 <ecr-uri>/collabcode-backend:latest
-```
+| 💤 **Spin-down** | Free Web Services sleep after 15 min of inactivity |
+| ⏱ **Cold start** | First WebSocket connection after sleep takes ~30 sec |
+| 🔁 **Workaround** | Use [UptimeRobot](https://uptimerobot.com) to ping `/health` every 10 min to keep it warm |
 
 ---
 
@@ -454,10 +427,16 @@ Create a `.env` file in `frontend/` for local development:
 VITE_WS_URL=ws://localhost:1234
 ```
 
-For production (EC2):
+For production — set this in **Vercel Dashboard → Project → Settings → Environment Variables**:
 
 ```env
-VITE_WS_URL=ws://<your-ec2-public-ip>:1234
+VITE_WS_URL=wss://real-time-collaborative-code-editor-wb5a.onrender.com
+```
+
+For the **Render backend** — set in Render Dashboard → Environment:
+
+```env
+PORT=10000
 ```
 
 > ⚠️ **Never commit `.env` files.** Add them to `.gitignore`.
@@ -514,49 +493,44 @@ VITE_WS_URL=ws://<your-ec2-public-ip>:1234
 
 ---
 
-## 🗺 AWS Infrastructure Diagram
+## 🗺 Infrastructure Diagram
 
 ```
-  ┌──────────────────────────────────────────────────────────────┐
-  │                        AWS CLOUD                             │
-  │                    Region: ap-south-1                        │
-  │                                                              │
-  │   ┌──────────────────────────────────────────────────────┐   │
-  │   │                 Amazon ECR                           │   │
-  │   │  ┌─────────────────────┐  ┌─────────────────────┐   │   │
-  │   │  │ collabcode-backend  │  │ collabcode-frontend  │   │   │
-  │   │  │ :latest             │  │ :latest              │   │   │
-  │   │  └──────────┬──────────┘  └──────────┬───────────┘   │   │
-  │   └─────────────┼──────────────────────── ┼───────────────┘   │
-  │                 │  docker pull             │                   │
-  │                 ▼                         ▼                   │
-  │   ┌──────────────────────────────────────────────────────┐   │
-  │   │                 EC2 Instance (t2.micro)               │   │
-  │   │                  Ubuntu 22.04 LTS                     │   │
-  │   │                                                        │   │
-  │   │   ┌────────────────┐     ┌──────────────────────┐    │   │
-  │   │   │  Docker        │     │  Docker               │    │   │
-  │   │   │  Container     │     │  Container            │    │   │
-  │   │   │  backend       │     │  frontend             │    │   │
-  │   │   │  PORT: 1234    │     │  PORT: 80 (nginx)     │    │   │
-  │   │   └────────────────┘     └──────────────────────┘    │   │
-  │   │                                                        │   │
-  │   │   Security Group Inbound:                              │   │
-  │   │   :22   (SSH)   ← Your IP only                        │   │
-  │   │   :80   (HTTP)  ← 0.0.0.0/0                          │   │
-  │   │   :1234 (WS)    ← 0.0.0.0/0                          │   │
-  │   └──────────────────────────────────────────────────────┘   │
-  │                          ▲                                    │
-  └──────────────────────────┼────────────────────────────────────┘
-                             │
-                   Public IP / DNS
-                             │
-            ┌────────────────┴──────────────────┐
-            │                                   │
-    ┌───────┴──────┐                   ┌────────┴──────┐
-    │   User A     │                   │   User B      │
-    │  Browser     │                   │  Browser      │
-    └──────────────┘                   └───────────────┘
+  GitHub Repository (main branch)
+  ┌──────────────────────────────────────────────────────────┐
+  │   git push → triggers auto-deploy on both platforms      │
+  └───────────────────┬──────────────────────┬───────────────┘
+                      │                      │
+          ┌───────────▼──────────┐  ┌────────▼──────────────┐
+          │   ▲ VERCEL           │  │   🚀 RENDER            │
+          │                      │  │                        │
+          │   Framework: Vite    │  │   Runtime: Node.js     │
+          │   Root: /frontend    │  │   Root: /backend       │
+          │   Build: npm run     │  │   CMD: node server.js  │
+          │          build       │  │   PORT: 10000          │
+          │   Output: /dist      │  │                        │
+          │   CDN: Global Edge   │  │   ENV:                 │
+          │                      │  │   PORT=10000           │
+          │   ENV:               │  │                        │
+          │   VITE_WS_URL=       │  │   URL:                 │
+          │   wss://render-url   │  │   *.onrender.com       │
+          │                      │  │                        │
+          │   URL:               │  └────────────┬───────────┘
+          │   *.vercel.app       │               │
+          └──────────┬───────────┘               │
+                     │  HTTPS                    │ wss://
+                     │  (serves React app)       │ (WebSocket sync)
+                     ▼                           ▼
+          ┌──────────────────────────────────────────────────┐
+          │                   BROWSER                        │
+          │                                                  │
+          │   ┌─────────────┐         ┌─────────────┐        │
+          │   │   User A    │         │   User B    │        │
+          │   │  Monaco Ed. │         │  Monaco Ed. │        │
+          │   │  Yjs (CRDT) │◄───────►│  Yjs (CRDT) │        │
+          │   └─────────────┘  sync   └─────────────┘        │
+          │         via wss://render WebSocket server        │
+          └──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -573,7 +547,9 @@ VITE_WS_URL=ws://<your-ec2-public-ip>:1234
 
 <div align="center">
 
-**Built with ❤️ to learn Docker & AWS in a real-world project**
+**Built with ❤️ to learn Docker, Vercel & Render in a real-world project**
+
+🌐 [Live Demo (Vercel)](https://real-time-collaborative-code-editor-gilt.vercel.app/) &nbsp;·&nbsp; ⚙️ [Backend (Render)](https://real-time-collaborative-code-editor-wb5a.onrender.com)
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:C4A882,25:D2B48C,50:FFFFFF,75:DEB887,100:F5DEB3&height=100&section=footer" width="100%"/>
 
